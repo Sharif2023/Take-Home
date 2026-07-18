@@ -14,13 +14,31 @@ export function markAsReturningCustomer() {
 
 export default function CustomerBadge() {
   const [returning, setReturning] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [mounted, setMounted] = useState(true);
 
   useEffect(() => {
     setReturning(localStorage.getItem(RETURNING_KEY) === '1');
+    const fadeTimer = setTimeout(() => setVisible(false), 4500);
+    const unmountTimer = setTimeout(() => setMounted(false), 5000);
+    
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(unmountTimer);
+    };
   }, []);
 
+  if (!mounted) return null;
+
   return (
-    <div className={`customer-badge ${returning ? 'returning' : 'new'}`}>
+    <div 
+      className={`customer-badge ${returning ? 'returning' : 'new'}`}
+      style={{ 
+        opacity: visible ? 1 : 0, 
+        transition: 'opacity 0.5s ease-out',
+        pointerEvents: visible ? 'auto' : 'none'
+      }}
+    >
       {returning ? (
         <>
           <UserCheck size={14} />
