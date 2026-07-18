@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCartStore from '../store/cartStore';
 import { placeOrder } from '../lib/api';
+import useAuthStore from '../store/authStore';
 import { markAsReturningCustomer } from '../components/CustomerBadge';
 import { EmptyState } from '../components/UI';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Loader, RefreshCw } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Loader, RefreshCw, X } from 'lucide-react';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80';
 const BDT = (amount) => `৳${Number(amount).toLocaleString('en-BD', { minimumFractionDigits: 2 })}`;
@@ -105,6 +106,9 @@ function CheckoutModal({ onClose, onSuccess, retryCount }) {
             <h2 className="modal-title">Delivery Information</h2>
             <p className="modal-sub">Bangladesh delivery — fill in your details</p>
           </div>
+          <button type="button" className="btn-icon" onClick={onClose} aria-label="Close modal">
+            <X size={20} />
+          </button>
         </div>
 
         {apiError && (
@@ -283,6 +287,7 @@ function SuccessModal({ onClose }) {
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getSubtotal, getTotalItems } = useCartStore();
+  const isAdmin = useAuthStore((s) => s.isAdmin)();
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
@@ -393,13 +398,19 @@ export default function CartPage() {
                 <span>Total</span>
                 <span>{BDT(subtotal)}</span>
               </div>
-              <button
-                className="btn btn-primary w-full"
-                onClick={() => setShowCheckout(true)}
-              >
-                <ShoppingBag size={18} />
-                Proceed to Checkout
-              </button>
+              {isAdmin ? (
+                <div className="form-error-banner" style={{ display: 'block', textAlign: 'center' }}>
+                  Admins cannot place orders.
+                </div>
+              ) : (
+                <button
+                  className="btn btn-primary w-full"
+                  onClick={() => setShowCheckout(true)}
+                >
+                  <ShoppingBag size={18} />
+                  Proceed to Checkout
+                </button>
+              )}
               <Link to="/products" className="btn btn-ghost w-full mt-2">
                 <ArrowLeft size={16} /> Continue Shopping
               </Link>

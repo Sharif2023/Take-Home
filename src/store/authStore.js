@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { login as loginApi, getMe } from '../lib/api';
+import useCartStore from './cartStore';
 
 const useAuthStore = create(
   persist(
@@ -17,6 +18,7 @@ const useAuthStore = create(
           const { data } = await loginApi(email, password);
           localStorage.setItem('token', data.token);
           localStorage.setItem('refreshToken', data.refreshToken);
+          useCartStore.getState().clearCart();
           set({
             user: { _id: data._id, name: data.name, email: data.email, role: data.role },
             token: data.token,
@@ -34,6 +36,7 @@ const useAuthStore = create(
       logout: () => {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
+        useCartStore.getState().clearCart();
         set({ user: null, token: null, refreshToken: null });
       },
 

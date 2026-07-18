@@ -95,9 +95,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="login-hint">
-          Default: <code>admin@example.com</code> / <code>Welcome@123</code>
-        </p>
+
       </div>
     </main>
   );

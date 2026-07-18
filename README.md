@@ -2,6 +2,8 @@
 
 A modern, responsive React e-commerce application built to fulfill the Frontend Tech Associate take-home assessment requirements.
 
+**🔴 Live Demo:** [https://shopsnap-takehome.vercel.app](https://shopsnap-takehome.vercel.app)
+
 ## 🚀 Setup Instructions
 
 1. **Install dependencies:**
