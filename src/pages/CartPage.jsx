@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCartStore from '../store/cartStore';
 import { placeOrder } from '../lib/api';
+import useAuthStore from '../store/authStore';
 import { markAsReturningCustomer } from '../components/CustomerBadge';
 import { EmptyState } from '../components/UI';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Loader, RefreshCw, X } from 'lucide-react';
@@ -286,6 +287,7 @@ function SuccessModal({ onClose }) {
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getSubtotal, getTotalItems } = useCartStore();
+  const isAdmin = useAuthStore((s) => s.isAdmin)();
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
@@ -396,13 +398,19 @@ export default function CartPage() {
                 <span>Total</span>
                 <span>{BDT(subtotal)}</span>
               </div>
-              <button
-                className="btn btn-primary w-full"
-                onClick={() => setShowCheckout(true)}
-              >
-                <ShoppingBag size={18} />
-                Proceed to Checkout
-              </button>
+              {isAdmin ? (
+                <div className="form-error-banner" style={{ display: 'block', textAlign: 'center' }}>
+                  Admins cannot place orders.
+                </div>
+              ) : (
+                <button
+                  className="btn btn-primary w-full"
+                  onClick={() => setShowCheckout(true)}
+                >
+                  <ShoppingBag size={18} />
+                  Proceed to Checkout
+                </button>
+              )}
               <Link to="/products" className="btn btn-ghost w-full mt-2">
                 <ArrowLeft size={16} /> Continue Shopping
               </Link>
